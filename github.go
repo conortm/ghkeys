@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/google/go-github/github"
@@ -32,7 +31,7 @@ func newGithub(token string) Github {
 		},
 	}))
 
-	//* DEBUG: print rate-limit.
+	/* DEBUG: print rate-limit.
 	fmt.Println("<DEBUG>")
 	rate, _, err := client.RateLimit()
 	if err != nil {
