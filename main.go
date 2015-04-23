@@ -7,10 +7,11 @@ import (
 	"strings"
 )
 
-// TODO: Write usage docs.
 const usageMessage = "" + `
 'ghkeys' uses the GitHub API to get the SSH keys of individual users and/or
 members of teams and either print them or write them to authorized_keys files.
+
+Pass a single 'username' argument to only print/write keys for that user.
 `
 
 var (
@@ -43,18 +44,24 @@ func main() {
 	config, err := newConfig(*configFilename)
 	check(err)
 
+	singleUsername := flag.Arg(0)
+
 	// TODO: validate config, including that usernames exist on server.
 
 	github := newGithub(config.GithubToken)
 
+	usernameCount := 0
 	usernameKeysChan := make(chan usernameKeys)
 	for _, user := range config.Users {
-		go func(username string, users, teams []string) {
-			keys := github.getKeys(users, teams)
-			usernameKeysChan <- usernameKeys{username: username, keys: keys}
-		}(user.Username, user.GithubUsers, user.GithubTeams)
+		if singleUsername == "" || singleUsername == user.Username {
+			usernameCount++
+			go func(username string, users, teams []string) {
+				keys := github.getKeys(users, teams)
+				usernameKeysChan <- usernameKeys{username: username, keys: keys}
+			}(user.Username, user.GithubUsers, user.GithubTeams)
+		}
 	}
-	for i := 0; i < len(config.Users); i++ {
+	for i := 0; i < usernameCount; i++ {
 		usernameKey := <-usernameKeysChan
 		authorizedKeysOutput := strings.Join(usernameKey.keys, "\n")
 		if *writeToFile {

@@ -47,6 +47,12 @@ To print all keys:
 $ ghkeys -config="/path/to/config.yml"
 ```
 
+Pass single username argument to print only that user's keys, for example, when using `AuthorizedKeysCommand`:
+
+```sh
+$ ghkeys -config="/path/to/config.yml" superadmin
+```
+
 Use the `-write` flag to write keys to users' `authorized_keys` files:
 
 ```sh
@@ -55,7 +61,6 @@ $ ghkeys -config="/path/to/config.yml" -write
 
 ## TODO
 
-* Add "single username" argument to fetch SSH keys for single user only.
 * Implement https://github.com/sourcegraph/apiproxy
 * Validate config file
 * Better error handling
