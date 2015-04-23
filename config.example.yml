@@ -1,0 +1,19 @@
+---
+github_token: my_github_token
+users:
+  - username: superadmin
+    github_users:
+      - github_user_1
+      - github_user_2
+      - github_user_3
+    github_teams:
+      - MyOrg/Team Name 1
+      - MyOrg/Team Name 2
+  - username: admin
+    github_users:
+      - github_user_3
+      - github_user_4
+    github_teams:
+      - MyOrg/Team Name 2
+      - MyOrg/Team Name 3
+      - MyOrg/Team Name 4
