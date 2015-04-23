@@ -52,3 +52,11 @@ Use the `-write` flag to write keys to users' `authorized_keys` files:
 ```sh
 $ ghkeys -config="/path/to/config.yml" -write
 ```
+
+## TODO
+
+* Add "single username" argument to fetch SSH keys for single user only.
+* Implement https://github.com/sourcegraph/apiproxy
+* Validate config file
+* Better error handling
+* Tests
