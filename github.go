@@ -47,14 +47,21 @@ func (gc *githubClient) getTeamID(orgName string) (int, error) {
 	orgNameArray := strings.Split(orgName, "/")
 	org := orgNameArray[0]
 	name := orgNameArray[1]
-	teams, _, err := gc.Organizations.ListTeams(org, nil)
-	if err != nil {
-		return 0, err
-	}
-	for _, team := range teams {
-		if strings.EqualFold(*team.Name, name) {
-			return *team.ID, nil
+	opt := &github.ListOptions{PerPage: 25}
+	for {
+		teams, resp, err := gc.Organizations.ListTeams(org, opt)
+		if err != nil {
+			return 0, err
 		}
+		for _, team := range teams {
+			if strings.EqualFold(*team.Name, name) {
+				return *team.ID, nil
+			}
+		}
+		if resp.NextPage == 0 {
+			break
+		}
+		opt.Page = resp.NextPage
 	}
 	return 0, errors.New("Team ID not found.")
 }
@@ -70,12 +77,19 @@ func (gc *githubClient) getMembersOfTeam(orgName string) ([]string, error) {
 	if err != nil {
 		return members, err
 	}
-	githubUsers, _, err := gc.Organizations.ListTeamMembers(teamID, nil)
-	if err != nil {
-		return members, err
-	}
-	for _, githubUser := range githubUsers {
-		members = append(members, *githubUser.Login)
+	opt := &github.ListOptions{PerPage: 25}
+	for {
+		githubUsers, resp, err := gc.Organizations.ListTeamMembers(teamID, opt)
+		if err != nil {
+			return members, err
+		}
+		for _, githubUser := range githubUsers {
+			members = append(members, *githubUser.Login)
+		}
+		if resp.NextPage == 0 {
+			break
+		}
+		opt.Page = resp.NextPage
 	}
 	githubTeamMembers[orgName] = members
 	return members, nil
@@ -88,12 +102,19 @@ func (gc *githubClient) getKeysOfUser(user string) ([]string, error) {
 	if ok {
 		return keys, nil
 	}
-	githubKeys, _, err := gc.Users.ListKeys(user, nil)
-	if err != nil {
-		return keys, err
-	}
-	for _, githubKey := range githubKeys {
-		keys = append(keys, *githubKey.Key)
+	opt := &github.ListOptions{PerPage: 25}
+	for {
+		githubKeys, resp, err := gc.Users.ListKeys(user, opt)
+		if err != nil {
+			return keys, err
+		}
+		for _, githubKey := range githubKeys {
+			keys = append(keys, *githubKey.Key)
+		}
+		if resp.NextPage == 0 {
+			break
+		}
+		opt.Page = resp.NextPage
 	}
 	githubUserKeys[user] = keys
 	return keys, nil
