@@ -1,4 +1,4 @@
-# ghkeys [![Build Status](https://travis-ci.org/conortm/ghkeys.svg)](https://travis-ci.org/conortm/ghkeys) [![Coverage Status](https://coveralls.io/repos/conortm/ghkeys/badge.svg?branch=master)](https://coveralls.io/r/conortm/ghkeys?branch=master)
+# ghkeys [![Build Status](https://img.shields.io/travis/conortm/ghkeys.svg)](https://travis-ci.org/conortm/ghkeys) [![Coverage Status](https://img.shields.io/coveralls/conortm/ghkeys.svg)](https://coveralls.io/r/conortm/ghkeys?branch=master)
 
 [ghkeys](https://github.com/conortm/ghkeys) is a simple command line tool for syncing server users' authorized SSH keys with those of one or more GitHub accounts.
 
