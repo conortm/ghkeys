@@ -49,7 +49,7 @@ func main() {
 
 	// TODO: validate config, including that usernames exist on server.
 
-	github := newGithub(config.GithubToken)
+	gc := newGithubClient(config.GithubToken)
 
 	usernameCount := 0
 	usernameKeysChan := make(chan usernameKeys)
@@ -57,7 +57,7 @@ func main() {
 		if singleUsername == "" || singleUsername == user.Username {
 			usernameCount++
 			go func(username string, users, teams []string) {
-				keys := github.getKeys(users, teams)
+				keys := gc.getKeys(users, teams)
 				usernameKeysChan <- usernameKeys{username: username, keys: keys}
 			}(user.Username, user.GithubUsers, user.GithubTeams)
 		}

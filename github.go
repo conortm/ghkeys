@@ -16,13 +16,11 @@ func (t *tokenSource) Token() (*oauth2.Token, error) {
 	return t.token, nil
 }
 
-// Github holds github token and client
-type Github struct {
-	token  string
-	client *github.Client
+type githubClient struct {
+	*github.Client
 }
 
-func newGithub(token string) Github {
+func newGithubClient(token string) *githubClient {
 	// TODO: https://github.com/sourcegraph/apiproxy
 	client := github.NewClient(oauth2.NewClient(oauth2.NoContext, &tokenSource{
 		&oauth2.Token{
@@ -42,14 +40,14 @@ func newGithub(token string) Github {
 	fmt.Println("</DEBUG>")
 	// END DEBUG. */
 
-	return Github{client: client, token: token}
+	return &githubClient{client}
 }
 
-func (g *Github) getTeamID(orgName string) (int, error) {
+func (gc *githubClient) getTeamID(orgName string) (int, error) {
 	orgNameArray := strings.Split(orgName, "/")
 	org := orgNameArray[0]
 	name := orgNameArray[1]
-	teams, _, err := g.client.Organizations.ListTeams(org, nil)
+	teams, _, err := gc.Organizations.ListTeams(org, nil)
 	if err != nil {
 		return 0, err
 	}
@@ -63,16 +61,16 @@ func (g *Github) getTeamID(orgName string) (int, error) {
 
 var githubTeamMembers = map[string][]string{}
 
-func (g *Github) getMembersOfTeam(orgName string) ([]string, error) {
+func (gc *githubClient) getMembersOfTeam(orgName string) ([]string, error) {
 	members, ok := githubTeamMembers[orgName]
 	if ok {
 		return members, nil
 	}
-	teamID, err := g.getTeamID(orgName)
+	teamID, err := gc.getTeamID(orgName)
 	if err != nil {
 		return members, err
 	}
-	githubUsers, _, err := g.client.Organizations.ListTeamMembers(teamID, nil)
+	githubUsers, _, err := gc.Organizations.ListTeamMembers(teamID, nil)
 	if err != nil {
 		return members, err
 	}
@@ -85,12 +83,12 @@ func (g *Github) getMembersOfTeam(orgName string) ([]string, error) {
 
 var githubUserKeys = map[string][]string{}
 
-func (g *Github) getKeysOfUser(user string) ([]string, error) {
+func (gc *githubClient) getKeysOfUser(user string) ([]string, error) {
 	keys, ok := githubUserKeys[user]
 	if ok {
 		return keys, nil
 	}
-	githubKeys, _, err := g.client.Users.ListKeys(user, nil)
+	githubKeys, _, err := gc.Users.ListKeys(user, nil)
 	if err != nil {
 		return keys, err
 	}
@@ -110,13 +108,13 @@ func appendUserIfMissing(users []string, newUser string) []string {
 	return append(users, newUser)
 }
 
-func (g *Github) getKeys(users, teams []string) []string {
+func (gc *githubClient) getKeys(users, teams []string) []string {
 	var keys []string
 	// add members of teams to array of users
 	teamMembersChan := make(chan []string)
 	for _, orgName := range teams {
 		go func(orgName string) {
-			members, _ := g.getMembersOfTeam(orgName)
+			members, _ := gc.getMembersOfTeam(orgName)
 			// TODO: handle error
 			teamMembersChan <- members
 		}(orgName)
@@ -131,7 +129,7 @@ func (g *Github) getKeys(users, teams []string) []string {
 	userKeysChan := make(chan []string)
 	for _, user := range users {
 		go func(user string) {
-			userKeys, _ := g.getKeysOfUser(user)
+			userKeys, _ := gc.getKeysOfUser(user)
 			// TODO: handle error
 			userKeysChan <- userKeys
 		}(user)

@@ -23,20 +23,16 @@ users:
   - username: superadmin
     github_users:
       - github_user_1
-      - github_user_2
-      - github_user_3
     github_teams:
       # Specify teams by Org name and team name, separated by a /
-      - MyOrg/Team Name 1
-      - MyOrg/Team Name 2
+      - MyOrg/Team 1
+      - MyOrg/Team 2
   - username: admin
     github_users:
-      - github_user_3
-      - github_user_4
+      - github_user_1
+      - github_user_2
     github_teams:
-      - MyOrg/Team Name 2
-      - MyOtherOrg/Team Name 1
-      - MyOtherOrg/Team Name 2
+      - MyOtherOrg/Team 3
 ```
 
 ## Execute
