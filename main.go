@@ -38,42 +38,50 @@ type usernameKeys struct {
 	keys     []string
 }
 
-func main() {
-	flag.Usage = usage
-	flag.Parse()
-
-	config, err := newConfig(*configFilename)
-	check(err)
-
-	singleUsername := flag.Arg(0)
-
-	// TODO: validate config, including that usernames exist on server.
-
-	gc := newGithubClient(config.GithubToken)
-
+func getUsernamesKeys(config config, client *githubClient, singleUsername string) map[string][]string {
+	usernamesKeys := make(map[string][]string)
 	usernameCount := 0
 	usernameKeysChan := make(chan usernameKeys)
 	for _, user := range config.Users {
 		if singleUsername == "" || singleUsername == user.Username {
 			usernameCount++
 			go func(username string, users, teams []string) {
-				keys := gc.getKeys(users, teams)
+				keys := client.getKeysOfUsersAndTeams(users, teams)
 				usernameKeysChan <- usernameKeys{username: username, keys: keys}
 			}(user.Username, user.GithubUsers, user.GithubTeams)
 		}
 	}
 	for i := 0; i < usernameCount; i++ {
-		usernameKey := <-usernameKeysChan
-		authorizedKeysOutput := strings.Join(usernameKey.keys, "\n")
+		tempUsernameKeys := <-usernameKeysChan
+		usernamesKeys[tempUsernameKeys.username] = tempUsernameKeys.keys
+	}
+	return usernamesKeys
+}
+
+func main() {
+	flag.Usage = usage
+	flag.Parse()
+
+	config, err := newConfig(*configFilename)
+	check(err)
+	// TODO: validate config values
+
+	client := newGithubClient(config.GithubToken)
+
+	usernamesKeys := getUsernamesKeys(config, client, flag.Arg(0))
+
+	for username, keys := range usernamesKeys {
+		keysOutput := strings.Join(keys, "\n")
 		if *writeToFile {
-			authorizedKeysFilename := fmt.Sprintf("/home/%s/.ssh/authorized_keys", usernameKey.username)
-			f, err := os.Create(authorizedKeysFilename)
+			// TODO: Is this always the path?
+			authorizedKeysFilename := fmt.Sprintf("/home/%s/.ssh/authorized_keys", username)
+			authorizedKeysFile, err := os.Open(authorizedKeysFilename)
 			check(err)
-			defer f.Close()
-			_, err = f.WriteString(authorizedKeysOutput)
+			defer authorizedKeysFile.Close()
+			_, err = authorizedKeysFile.WriteString(keysOutput)
 			check(err)
 		} else {
-			fmt.Println(authorizedKeysOutput)
+			fmt.Println(keysOutput)
 		}
 	}
 }

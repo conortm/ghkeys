@@ -108,7 +108,7 @@ func appendUserIfMissing(users []string, newUser string) []string {
 	return append(users, newUser)
 }
 
-func (gc *githubClient) getKeys(users, teams []string) []string {
+func (gc *githubClient) getKeysOfUsersAndTeams(users, teams []string) []string {
 	var keys []string
 	// add members of teams to array of users
 	teamMembersChan := make(chan []string)

@@ -12,7 +12,7 @@ $ go get github.com/conortm/ghkeys
 
 ## Configure
 
-Create a `config.yml` file like:
+Create a `config.yml` file like [`config.example.yml`](./config.example.yml):
 
 ```yaml
 ---
@@ -60,4 +60,3 @@ $ ghkeys -config="/path/to/config.yml" -write
 * Implement https://github.com/sourcegraph/apiproxy
 * Validate config file
 * Better error handling
-* Tests

@@ -94,7 +94,7 @@ func TestGetKeysOfUser(t *testing.T) {
 	assert.Equal(t, "github_user_1_key_2", keysOfUser[1])
 }
 
-func TestGetKeys(t *testing.T) {
+func TestGetKeysOfUsersAndTeams(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -102,11 +102,53 @@ func TestGetKeys(t *testing.T) {
 	teams := []string{"MyOrg/Team 1", "MyOrg/Team 2"}
 	expectedKeys := []string{"github_user_1_key_1", "github_user_1_key_2", "github_user_2_key_1", "github_user_3_key_1"}
 
-	keys := client.getKeys(users, teams)
+	actualKeys := client.getKeysOfUsersAndTeams(users, teams)
 
-	// TODO: Better way to do this?
-	assert.Len(t, keys, len(expectedKeys))
+	assert.Len(t, actualKeys, len(expectedKeys))
 	for _, expectedKey := range expectedKeys {
-		assert.Contains(t, keys, expectedKey)
+		assert.Contains(t, actualKeys, expectedKey)
 	}
+}
+
+func testUsernamesKeys(t *testing.T, expectedUsernamesKeys, actualUsernamesKeys map[string][]string) {
+	assert.Len(t, actualUsernamesKeys, len(expectedUsernamesKeys))
+	for expectedUsername, expectedKeys := range expectedUsernamesKeys {
+		actualKeys, ok := actualUsernamesKeys[expectedUsername]
+		assert.True(t, ok)
+		for _, expectedKey := range expectedKeys {
+			assert.Contains(t, actualKeys, expectedKey)
+		}
+	}
+}
+
+func TestGetUsernamesKeys(t *testing.T) {
+	setup()
+	defer teardown()
+
+	config, err := newConfig("config.example.yml")
+	assert.Nil(t, err)
+
+	// Test for single username
+	expectedUsernamesKeys := map[string][]string{
+		"superadmin": []string{
+			"github_user_1_key_1",
+			"github_user_1_key_2",
+			"github_user_2_key_1",
+			"github_user_3_key_1",
+		},
+	}
+	actualUsernamesKeys := getUsernamesKeys(config, client, "superadmin")
+
+	testUsernamesKeys(t, expectedUsernamesKeys, actualUsernamesKeys)
+
+	// Test for all usernames
+	expectedUsernamesKeys["admin"] = []string{
+		"github_user_1_key_1",
+		"github_user_1_key_2",
+		"github_user_2_key_1",
+		"github_user_4_key_1",
+	}
+	actualUsernamesKeys = getUsernamesKeys(config, client, "")
+
+	testUsernamesKeys(t, expectedUsernamesKeys, actualUsernamesKeys)
 }
