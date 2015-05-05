@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-const usageMessage = "" + `
+const usageMessage = `
 'ghkeys' uses the GitHub API to get the SSH keys of individual users and/or
 members of teams and either print them or write them to authorized_keys files.
 
@@ -21,10 +21,8 @@ var (
 )
 
 func usage() {
-	fmt.Println(usageMessage)
-	fmt.Println("Flags:")
+	fmt.Println(usageMessage + "\nFlags:")
 	flag.PrintDefaults()
-	os.Exit(2)
 }
 
 func check(err error) {
@@ -58,6 +56,21 @@ func getUsernamesKeys(config config, client *githubClient, singleUsername string
 	return usernamesKeys
 }
 
+func getKeysOutput(keys []string) string {
+	return strings.Join(keys, "\n")
+}
+
+func writeKeysToFile(keys []string, filename string) error {
+	authorizedKeysFile, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer authorizedKeysFile.Close()
+	keysOutput := getKeysOutput(keys) + "\n"
+	_, err = authorizedKeysFile.WriteString(keysOutput)
+	return err
+}
+
 func main() {
 	flag.Usage = usage
 	flag.Parse()
@@ -71,17 +84,12 @@ func main() {
 	usernamesKeys := getUsernamesKeys(config, client, flag.Arg(0))
 
 	for username, keys := range usernamesKeys {
-		keysOutput := strings.Join(keys, "\n")
 		if *writeToFile {
 			// TODO: Is this always the path?
-			authorizedKeysFilename := fmt.Sprintf("/home/%s/.ssh/authorized_keys", username)
-			authorizedKeysFile, err := os.Open(authorizedKeysFilename)
-			check(err)
-			defer authorizedKeysFile.Close()
-			_, err = authorizedKeysFile.WriteString(keysOutput)
+			err := writeKeysToFile(keys, fmt.Sprintf("/home/%s/.ssh/authorized_keys", username))
 			check(err)
 		} else {
-			fmt.Println(keysOutput)
+			fmt.Println(getKeysOutput(keys))
 		}
 	}
 }

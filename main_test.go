@@ -2,12 +2,19 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+)
+
+const (
+	testdataConfigFilename     = "testdata/config.test.yml"
+	testAuthorizedKeysFilename = "testdata/authorized_keys"
 )
 
 var (
@@ -50,7 +57,8 @@ func teardown() {
 }
 
 func TestConfig(t *testing.T) {
-	testConfig, err := newConfig("config.example.yml")
+	// Test that testdata/config.yml jives with config struct
+	testConfig, err := newConfig(testdataConfigFilename)
 
 	assert.Nil(t, err)
 	assert.Equal(t, "my_github_token", testConfig.GithubToken)
@@ -60,27 +68,49 @@ func TestConfig(t *testing.T) {
 	assert.Equal(t, "github_user_1", testConfig.Users[0].GithubUsers[0])
 	assert.Len(t, testConfig.Users[0].GithubTeams, 2)
 	assert.Equal(t, "MyOrg/Team 1", testConfig.Users[0].GithubTeams[0])
+
+	// Test nonexistent config file error
+	_, err = newConfig("thisfileshouldnotexist.yml")
+	assert.Error(t, err)
+
+	// Test malformed yaml error
+	configFile, _ := ioutil.TempFile("", "ghkeys-config")
+	defer os.RemoveAll(configFile.Name())
+	configContent := "invalid config yml"
+	ioutil.WriteFile(configFile.Name(), []byte(configContent), os.ModePerm)
+	_, err = newConfig(configFile.Name())
+	assert.Error(t, err)
 }
 
 func TestGetTeamID(t *testing.T) {
 	setup()
 	defer teardown()
 
+	// Test valid Team ID
 	teamID, err := client.getTeamID("MyOrg/Team 2")
 
 	assert.Nil(t, err)
 	assert.Equal(t, 2, teamID)
+
+	// Test invalid Team ID
+	_, err = client.getTeamID("MyOrg/Invalid Team")
+	assert.Error(t, err)
 }
 
 func TestGetMembersOfTeam(t *testing.T) {
 	setup()
 	defer teardown()
 
+	// Test getting members of valid Team
 	membersOfTeam, err := client.getMembersOfTeam("MyOrg/Team 2")
 
 	assert.Nil(t, err)
 	assert.Len(t, membersOfTeam, 1)
 	assert.Equal(t, "github_user_3", membersOfTeam[0])
+
+	// Test getting members of invalid Team
+	_, err = client.getMembersOfTeam("MyOrg/Invalid Team")
+	assert.Error(t, err)
 }
 
 func TestGetKeysOfUser(t *testing.T) {
@@ -125,7 +155,7 @@ func TestGetUsernamesKeys(t *testing.T) {
 	setup()
 	defer teardown()
 
-	config, err := newConfig("config.example.yml")
+	config, err := newConfig(testdataConfigFilename)
 	assert.Nil(t, err)
 
 	// Test for single username
@@ -151,4 +181,29 @@ func TestGetUsernamesKeys(t *testing.T) {
 	actualUsernamesKeys = getUsernamesKeys(config, client, "")
 
 	testUsernamesKeys(t, expectedUsernamesKeys, actualUsernamesKeys)
+}
+
+func TestGetKeysOutput(t *testing.T) {
+	expected := `github_user_1_key_1
+github_user_1_key_2
+github_user_1_key_3`
+	keys := []string{"github_user_1_key_1", "github_user_1_key_2", "github_user_1_key_3"}
+	actual := getKeysOutput(keys)
+
+	assert.Equal(t, expected, actual)
+}
+
+func TestWriteKeysToFile(t *testing.T) {
+	keys := []string{"github_user_1_key_1", "github_user_1_key_2", "github_user_1_key_3"}
+
+	authorizedKeysFile, _ := ioutil.TempFile("", "ghkeys-authorized_keys")
+	authorizedKeysFilename := authorizedKeysFile.Name()
+	defer os.RemoveAll(authorizedKeysFilename)
+	err := writeKeysToFile(keys, authorizedKeysFilename)
+
+	assert.Nil(t, err)
+
+	expectedKeysFileContent, _ := ioutil.ReadFile(testAuthorizedKeysFilename)
+	actualKeysFileContent, _ := ioutil.ReadFile(authorizedKeysFilename)
+	assert.Equal(t, expectedKeysFileContent, actualKeysFileContent)
 }

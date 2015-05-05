@@ -1,0 +1,18 @@
+---
+# Replace with your own GitHub token:
+github_token: my_github_token
+# Array of server usernames and the GitHub source(s) of their authorized keys:
+users:
+  - username: superadmin
+    github_users:
+      - github_user_1
+    github_teams:
+      # Specify teams by Org name and team name, separated by a /
+      - MyOrg/Team 1
+      - MyOrg/Team 2
+  - username: admin
+    github_users:
+      - github_user_1
+      - github_user_2
+    github_teams:
+      - MyOtherOrg/Team 3
