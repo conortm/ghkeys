@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -188,16 +189,27 @@ github_user_1_key_3`
 	assert.Equal(t, expected, actual)
 }
 
-func TestWriteKeysToFile(t *testing.T) {
+func TestWriteKeysToUserAuthorizedKeysFile(t *testing.T) {
 	// Test writing test keys to a test file
 	keys := []string{"github_user_1_key_1", "github_user_1_key_2", "github_user_1_key_3"}
-	authorizedKeysFile, _ := ioutil.TempFile("", "ghkeys-authorized_keys")
-	authorizedKeysFilename := authorizedKeysFile.Name()
-	defer os.RemoveAll(authorizedKeysFilename)
-	err := writeKeysToFile(keys, authorizedKeysFilename)
+	userHomeDir, _ := ioutil.TempDir("", "ghkeys-userHomeDir")
+	defer os.RemoveAll(userHomeDir)
+
+	// No .ssh directory exists, we expect an error
+	err := writeKeysToUserAuthorizedKeysFile(keys, userHomeDir)
+	assert.Error(t, err)
+
+	// Create a temp authorized_keys file with junk data
+	authorizedKeysFilename := getAuthorizedKeysFilename(userHomeDir)
+	os.MkdirAll(filepath.Dir(authorizedKeysFilename), os.ModePerm)
+	authorizedKeysFile, _ := os.Create(authorizedKeysFilename)
+	authorizedKeysFile.WriteString("junk")
+
+	// Test writing to an authorized_keys file
+	err = writeKeysToUserAuthorizedKeysFile(keys, userHomeDir)
 	assert.Nil(t, err)
 
-	// Compare test file to what we expect it to have
+	// Compare test authorized_keys file to what we expect it to have
 	expectedKeysFileContent, _ := ioutil.ReadFile(testAuthorizedKeysFilename)
 	actualKeysFileContent, _ := ioutil.ReadFile(authorizedKeysFilename)
 	assert.Equal(t, expectedKeysFileContent, actualKeysFileContent)

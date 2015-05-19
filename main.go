@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/user"
+	"path/filepath"
 	"strings"
 )
 
@@ -57,12 +59,19 @@ func getUsernamesKeys(config config, client *githubClient, singleUsername string
 	return usernamesKeys
 }
 
-func getKeysOutput(keys []string) string {
-	return strings.Join(keys, "\n")
+func getAuthorizedKeysFilename(userHomeDir string) string {
+	authorizedKeysFilename := filepath.Join(userHomeDir, ".ssh", "authorized_keys")
+	return authorizedKeysFilename
 }
 
-func writeKeysToFile(keys []string, filename string) error {
-	authorizedKeysFile, err := os.Create(filename)
+func getKeysOutput(keys []string) string {
+	keysOutput := strings.Join(keys, "\n")
+	return keysOutput
+}
+
+func writeKeysToUserAuthorizedKeysFile(keys []string, userHomeDir string) error {
+	authorizedKeysFilename := getAuthorizedKeysFilename(userHomeDir)
+	authorizedKeysFile, err := os.Create(authorizedKeysFilename)
 	if err != nil {
 		return err
 	}
@@ -84,7 +93,7 @@ func main() {
 
 	if *debug {
 		if rate, _, err := client.RateLimit(); err == nil {
-			fmt.Printf("GitHub API Rate Limit: %#v\n", rate)
+			log.Printf("GitHub API Rate Limit: %#v\n", rate)
 		}
 	}
 
@@ -92,9 +101,12 @@ func main() {
 
 	for username, keys := range usernamesKeys {
 		if *writeToFile {
-			// TODO: Is this always the path?
-			err := writeKeysToFile(keys, fmt.Sprintf("/home/%s/.ssh/authorized_keys", username))
-			check(err)
+			if user, err := user.Lookup(username); err == nil {
+				err = writeKeysToUserAuthorizedKeysFile(keys, user.HomeDir)
+				check(err)
+			} else {
+				log.Printf("User '%s' not found, no keys written.\n", username)
+			}
 		} else {
 			fmt.Println(getKeysOutput(keys))
 		}
