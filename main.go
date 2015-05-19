@@ -15,15 +15,26 @@ const usageMessage = `
 members of teams and either print them or write them to authorized_keys files.
 
 Pass a single 'username' argument to only print/write keys for that user.
+
+Usage:
+  ghkeys [-config="/path/to/config.yml"] [-write] [username]
 `
 
 var (
+	// VERSION swapped out by `go build -ldflags "-X main.VERSION 1.2.3"`
+	VERSION        = "0.0.3"
 	configFilename = flag.String("config", "config.yml", "Path to yaml config file")
 	debug          = flag.Bool("d", false, "Add debugging output")
+	showVersion    = flag.Bool("version", false, "Display the version number")
 	writeToFile    = flag.Bool("write", false, "Write keys to users' authorized_keys files")
 )
 
+func printVersion() {
+	fmt.Printf("ghkeys version %s\n", VERSION)
+}
+
 func usage() {
+	printVersion()
 	fmt.Println(usageMessage + "\nFlags:")
 	flag.PrintDefaults()
 }
@@ -84,6 +95,11 @@ func writeKeysToUserAuthorizedKeysFile(keys []string, userHomeDir string) error 
 func main() {
 	flag.Usage = usage
 	flag.Parse()
+
+	if *showVersion {
+		printVersion()
+		os.Exit(0)
+	}
 
 	config, err := newConfig(*configFilename)
 	check(err)
