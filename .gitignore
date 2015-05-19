@@ -26,3 +26,4 @@ _testmain.go
 # ghkeys-specific
 config.yml
 ghkeys
+result
