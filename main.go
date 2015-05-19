@@ -17,6 +17,7 @@ Pass a single 'username' argument to only print/write keys for that user.
 
 var (
 	configFilename = flag.String("config", "config.yml", "Path to yaml config file")
+	debug          = flag.Bool("d", false, "Add debugging output")
 	writeToFile    = flag.Bool("write", false, "Write keys to users' authorized_keys files")
 )
 
@@ -80,6 +81,12 @@ func main() {
 	// TODO: validate config values
 
 	client := newGithubClient(config.GithubToken)
+
+	if *debug {
+		if rate, _, err := client.RateLimit(); err == nil {
+			fmt.Printf("GitHub API Rate Limit: %#v\n", rate)
+		}
+	}
 
 	usernamesKeys := getUsernamesKeys(config, client, flag.Arg(0))
 

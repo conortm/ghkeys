@@ -57,9 +57,8 @@ func teardown() {
 }
 
 func TestConfig(t *testing.T) {
-	// Test that testdata/config.yml jives with config struct
+	// Test that test config file jives with config struct
 	testConfig, err := newConfig(testdataConfigFilename)
-
 	assert.Nil(t, err)
 	assert.Equal(t, "my_github_token", testConfig.GithubToken)
 	assert.Len(t, testConfig.Users, 2)
@@ -70,7 +69,7 @@ func TestConfig(t *testing.T) {
 	assert.Equal(t, "MyOrg/Team 1", testConfig.Users[0].GithubTeams[0])
 
 	// Test nonexistent config file error
-	_, err = newConfig("thisfileshouldnotexist.yml")
+	_, err = newConfig("testdata/thisfileshouldnotexist.yml")
 	assert.Error(t, err)
 
 	// Test malformed yaml error
@@ -86,14 +85,17 @@ func TestGetTeamID(t *testing.T) {
 	setup()
 	defer teardown()
 
-	// Test valid Team ID
+	// Test Team ID that exists
 	teamID, err := client.getTeamID("MyOrg/Team 2")
-
 	assert.Nil(t, err)
 	assert.Equal(t, 2, teamID)
 
 	// Test invalid Team ID
-	_, err = client.getTeamID("MyOrg/Invalid Team")
+	_, err = client.getTeamID("Invalid Team Name")
+	assert.Error(t, err)
+
+	// Test Team ID that does not exist
+	_, err = client.getTeamID("MyOrg/Nonexistant Team")
 	assert.Error(t, err)
 }
 
@@ -103,7 +105,6 @@ func TestGetMembersOfTeam(t *testing.T) {
 
 	// Test getting members of valid Team
 	membersOfTeam, err := client.getMembersOfTeam("MyOrg/Team 2")
-
 	assert.Nil(t, err)
 	assert.Len(t, membersOfTeam, 1)
 	assert.Equal(t, "github_user_3", membersOfTeam[0])
@@ -118,7 +119,6 @@ func TestGetKeysOfUser(t *testing.T) {
 	defer teardown()
 
 	keysOfUser, err := client.getKeysOfUser("github_user_1")
-
 	assert.Nil(t, err)
 	assert.Len(t, keysOfUser, 2)
 	assert.Equal(t, "github_user_1_key_2", keysOfUser[1])
@@ -131,9 +131,7 @@ func TestGetKeysOfUsersAndTeams(t *testing.T) {
 	users := []string{"github_user_1"}
 	teams := []string{"MyOrg/Team 1", "MyOrg/Team 2"}
 	expectedKeys := []string{"github_user_1_key_1", "github_user_1_key_2", "github_user_2_key_1", "github_user_3_key_1"}
-
 	actualKeys := client.getKeysOfUsersAndTeams(users, teams)
-
 	assert.Len(t, actualKeys, len(expectedKeys))
 	for _, expectedKey := range expectedKeys {
 		assert.Contains(t, actualKeys, expectedKey)
@@ -168,7 +166,6 @@ func TestGetUsernamesKeys(t *testing.T) {
 		},
 	}
 	actualUsernamesKeys := getUsernamesKeys(config, client, "superadmin")
-
 	testUsernamesKeys(t, expectedUsernamesKeys, actualUsernamesKeys)
 
 	// Test for all usernames
@@ -179,7 +176,6 @@ func TestGetUsernamesKeys(t *testing.T) {
 		"github_user_4_key_1",
 	}
 	actualUsernamesKeys = getUsernamesKeys(config, client, "")
-
 	testUsernamesKeys(t, expectedUsernamesKeys, actualUsernamesKeys)
 }
 
@@ -189,20 +185,19 @@ github_user_1_key_2
 github_user_1_key_3`
 	keys := []string{"github_user_1_key_1", "github_user_1_key_2", "github_user_1_key_3"}
 	actual := getKeysOutput(keys)
-
 	assert.Equal(t, expected, actual)
 }
 
 func TestWriteKeysToFile(t *testing.T) {
+	// Test writing test keys to a test file
 	keys := []string{"github_user_1_key_1", "github_user_1_key_2", "github_user_1_key_3"}
-
 	authorizedKeysFile, _ := ioutil.TempFile("", "ghkeys-authorized_keys")
 	authorizedKeysFilename := authorizedKeysFile.Name()
 	defer os.RemoveAll(authorizedKeysFilename)
 	err := writeKeysToFile(keys, authorizedKeysFilename)
-
 	assert.Nil(t, err)
 
+	// Compare test file to what we expect it to have
 	expectedKeysFileContent, _ := ioutil.ReadFile(testAuthorizedKeysFilename)
 	actualKeysFileContent, _ := ioutil.ReadFile(authorizedKeysFilename)
 	assert.Equal(t, expectedKeysFileContent, actualKeysFileContent)

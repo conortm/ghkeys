@@ -28,23 +28,14 @@ func newGithubClient(token string) *githubClient {
 			TokenType:   "token",
 		},
 	}))
-
-	/* DEBUG: print rate-limit.
-	fmt.Println("<DEBUG>")
-	rate, _, err := client.RateLimit()
-	if err != nil {
-		fmt.Printf("Error fetching GitHub API Rate Limit: %#v\n", err)
-	} else {
-		fmt.Printf("GitHub API Rate Limit: %#v\n", rate)
-	}
-	fmt.Println("</DEBUG>")
-	// END DEBUG. */
-
 	return &githubClient{client}
 }
 
 func (gc *githubClient) getTeamID(orgName string) (int, error) {
 	orgNameArray := strings.Split(orgName, "/")
+	if len(orgNameArray) != 2 {
+		return 0, errors.New("Team name must be in the form: MyOrg/Team Name")
+	}
 	org := orgNameArray[0]
 	name := orgNameArray[1]
 	opt := &github.ListOptions{PerPage: 25}
