@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	testdataConfigFilename     = "testdata/config.test.yml"
+	testdataConfigFilename     = "testdata/ghkeys.test.yml"
 	testAuthorizedKeysFilename = "testdata/authorized_keys"
 )
 

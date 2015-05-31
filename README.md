@@ -12,7 +12,7 @@ $ go get github.com/conortm/ghkeys
 
 ## Configure
 
-Create a `config.yml` file like [`config.example.yml`](./config.example.yml):
+Create a `ghkeys.yml` file like [`ghkeys.example.yml`](./ghkeys.example.yml):
 
 ```yaml
 ---
@@ -40,19 +40,19 @@ users:
 To print all keys:
 
 ```sh
-$ ghkeys -config="/path/to/config.yml"
+$ ghkeys -config="/path/to/ghkeys.yml"
 ```
 
 Pass single username argument to print only that user's keys, for example, when using `AuthorizedKeysCommand`:
 
 ```sh
-$ ghkeys -config="/path/to/config.yml" superadmin
+$ ghkeys -config="/path/to/ghkeys.yml" superadmin
 ```
 
 Use the `-write` flag to write keys to users' `authorized_keys` files:
 
 ```sh
-$ ghkeys -config="/path/to/config.yml" -write
+$ ghkeys -config="/path/to/ghkeys.yml" -write
 ```
 
 ## TODO
