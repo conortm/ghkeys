@@ -44,7 +44,7 @@
 <h2>
 <a id="configure" class="anchor" href="#configure" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configure</h2>
 
-<p>Create a <code>config.yml</code> file like <a href="./config.example.yml"><code>config.example.yml</code></a>:</p>
+<p>Create a <code>ghkeys.yml</code> file like <a href="./ghkeys.example.yml"><code>ghkeys.example.yml</code></a>:</p>
 
 <div class="highlight highlight-yaml"><pre><span class="pl-s">-<span class="pl-s">--</span></span>
 <span class="pl-c"># Replace with your own GitHub token:</span>
@@ -70,15 +70,15 @@
 
 <p>To print all keys:</p>
 
-<div class="highlight highlight-sh"><pre>$ ghkeys -config=<span class="pl-s"><span class="pl-pds">"</span>/path/to/config.yml<span class="pl-pds">"</span></span></pre></div>
+<div class="highlight highlight-sh"><pre>$ ghkeys -config=<span class="pl-s"><span class="pl-pds">"</span>/path/to/ghkeys.yml<span class="pl-pds">"</span></span></pre></div>
 
 <p>Pass single username argument to print only that user's keys, for example, when using <code>AuthorizedKeysCommand</code>:</p>
 
-<div class="highlight highlight-sh"><pre>$ ghkeys -config=<span class="pl-s"><span class="pl-pds">"</span>/path/to/config.yml<span class="pl-pds">"</span></span> superadmin</pre></div>
+<div class="highlight highlight-sh"><pre>$ ghkeys -config=<span class="pl-s"><span class="pl-pds">"</span>/path/to/ghkeys.yml<span class="pl-pds">"</span></span> superadmin</pre></div>
 
 <p>Use the <code>-write</code> flag to write keys to users' <code>authorized_keys</code> files:</p>
 
-<div class="highlight highlight-sh"><pre>$ ghkeys -config=<span class="pl-s"><span class="pl-pds">"</span>/path/to/config.yml<span class="pl-pds">"</span></span> -write</pre></div>
+<div class="highlight highlight-sh"><pre>$ ghkeys -config=<span class="pl-s"><span class="pl-pds">"</span>/path/to/ghkeys.yml<span class="pl-pds">"</span></span> -write</pre></div>
 
 <h2>
 <a id="todo" class="anchor" href="#todo" aria-hidden="true"><span class="octicon octicon-link"></span></a>TODO</h2>
