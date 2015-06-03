@@ -4,19 +4,19 @@
 
 Via configuration, specify individual GitHub users and/or entire teams, whose SSH keys should either be output directly or written to server users' `authorized_keys` files.
 
-## Install
+## Installation
 
 ```sh
 $ go get github.com/conortm/ghkeys
 ```
 
-## Configure
+## Configuration
 
 Create a `ghkeys.yml` file like [`ghkeys.example.yml`](./ghkeys.example.yml):
 
 ```yaml
 ---
-# Replace with your own GitHub token:
+# Replace with your own personal access token:
 github_token: my_github_token
 # Array of server usernames and the GitHub source(s) of their authorized keys:
 users:
@@ -35,7 +35,9 @@ users:
       - MyOtherOrg/Team 3
 ```
 
-## Execute
+*Note*: Replace `my_github_token` with your own [personal access token](https://help.github.com/articles/creating-an-access-token-for-command-line-use/).
+
+## Usage
 
 To print all keys:
 
@@ -57,6 +59,10 @@ $ ghkeys -config="/path/to/ghkeys.yml" -write
 
 ## TODO
 
-* Implement https://github.com/sourcegraph/apiproxy
-* Validate config file
-* Better error handling
+- [ ] Implement https://github.com/sourcegraph/apiproxy
+- [ ] Validate config file
+- [ ] Better error handling
+
+## License
+
+[MIT License](./LICENSE)
