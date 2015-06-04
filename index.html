@@ -37,17 +37,17 @@
 <p>Via configuration, specify individual GitHub users and/or entire teams, whose SSH keys should either be output directly or written to server users' <code>authorized_keys</code> files.</p>
 
 <h2>
-<a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install</h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
 
 <div class="highlight highlight-sh"><pre>$ go get github.com/conortm/ghkeys</pre></div>
 
 <h2>
-<a id="configure" class="anchor" href="#configure" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configure</h2>
+<a id="configuration" class="anchor" href="#configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuration</h2>
 
 <p>Create a <code>ghkeys.yml</code> file like <a href="./ghkeys.example.yml"><code>ghkeys.example.yml</code></a>:</p>
 
 <div class="highlight highlight-yaml"><pre><span class="pl-s">-<span class="pl-s">--</span></span>
-<span class="pl-c"># Replace with your own GitHub token:</span>
+<span class="pl-c"># Replace with your own personal access token:</span>
 <span class="pl-s"><span class="pl-ent">github_token:</span> <span class="pl-s">my_github_token</span></span>
 <span class="pl-c"># Array of server usernames and the GitHub source(s) of their authorized keys:</span>
 <span class="pl-s"><span class="pl-ent">users:</span></span>
@@ -65,8 +65,10 @@
     <span class="pl-s"><span class="pl-ent">github_teams:</span></span>
       <span class="pl-s">- <span class="pl-s">MyOtherOrg/Team 3</span></span></pre></div>
 
+<p><em>Note</em>: Replace <code>my_github_token</code> with your own <a href="https://help.github.com/articles/creating-an-access-token-for-command-line-use/">personal access token</a>.</p>
+
 <h2>
-<a id="execute" class="anchor" href="#execute" aria-hidden="true"><span class="octicon octicon-link"></span></a>Execute</h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
 
 <p>To print all keys:</p>
 
@@ -84,11 +86,16 @@
 <a id="todo" class="anchor" href="#todo" aria-hidden="true"><span class="octicon octicon-link"></span></a>TODO</h2>
 
 <ul>
-<li>Implement <a href="https://github.com/sourcegraph/apiproxy">https://github.com/sourcegraph/apiproxy</a>
+<li>[ ] Implement <a href="https://github.com/sourcegraph/apiproxy">https://github.com/sourcegraph/apiproxy</a>
 </li>
-<li>Validate config file</li>
-<li>Better error handling</li>
+<li>[ ] Validate config file</li>
+<li>[ ] Better error handling</li>
 </ul>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p><a href="./LICENSE">MIT License</a></p>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/conortm">conortm</a></p>
