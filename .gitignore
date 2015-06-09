@@ -24,6 +24,6 @@ _testmain.go
 *.prof
 
 # ghkeys-specific
-ghkeys.yml
+config.yml
 ghkeys
 result
