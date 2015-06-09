@@ -65,4 +65,4 @@ $ ghkeys -config="/path/to/config.yml" -write
 
 ## License
 
-[MIT License](./LICENSE)
+[MIT](./LICENSE) © [Conor McNamara](https://github.com/conortm)
