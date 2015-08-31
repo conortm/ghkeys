@@ -68,7 +68,7 @@ func (gc *githubClient) getMembersOfTeam(orgName string) ([]string, error) {
 	if err != nil {
 		return members, err
 	}
-	opt := &github.ListOptions{PerPage: 25}
+	opt := &github.OrganizationListTeamMembersOptions{ListOptions: github.ListOptions{PerPage: 25}}
 	for {
 		githubUsers, resp, err := gc.Organizations.ListTeamMembers(teamID, opt)
 		if err != nil {
@@ -80,7 +80,7 @@ func (gc *githubClient) getMembersOfTeam(orgName string) ([]string, error) {
 		if resp.NextPage == 0 {
 			break
 		}
-		opt.Page = resp.NextPage
+		opt.ListOptions.Page = resp.NextPage
 	}
 	githubTeamMembers[orgName] = members
 	return members, nil
