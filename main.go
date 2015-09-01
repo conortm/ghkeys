@@ -22,7 +22,7 @@ Usage:
 
 var (
 	// VERSION swapped out by `go build -ldflags "-X main.VERSION 1.2.3"`
-	VERSION        = "0.0.8"
+	VERSION        = "0.0.9"
 	configFilename = flag.String("config", "config.yml", "Path to yaml config file")
 	debug          = flag.Bool("d", false, "Add debugging output")
 	showVersion    = flag.Bool("version", false, "Display the version number")
