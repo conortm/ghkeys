@@ -1,14 +1,28 @@
 language: go
 sudo: false
 go:
- - 1.4.2
- - 1.5
- - tip
+  - 1.4.2
+  - 1.5
+  - tip
 before_install:
- - go get github.com/axw/gocov/gocov
- - go get github.com/mattn/goveralls
- - if ! go get code.google.com/p/go.tools/cmd/cover; then go get golang.org/x/tools/cmd/cover; fi
+  - go get github.com/axw/gocov/gocov
+  - go get github.com/mattn/goveralls
+  - if ! go get code.google.com/p/go.tools/cmd/cover; then go get golang.org/x/tools/cmd/cover; fi
+install: make install
 script:
- - $HOME/gopath/bin/goveralls -service=travis-ci
+  - $HOME/gopath/bin/goveralls -service=travis-ci
 notifications:
   email: false
+deploy:
+  provider: releases
+  api_key:
+    secure: aPoUmzlkPs5L8BHrEowO6PfypK8pe1+MZR8Pf3WWYT6MBmHsL0SCB4FW7TvGkHKFqJX/5M8cD7qCg2sgJS40nO9sk9RiQBEBY76MzXFVnvPRqVy+0PsHxY8TuFLz43gxyUXyz/WKbsFx7o+nuteZctzytTEReHQ21q7fCXGCXbw=
+  file:
+    - release/ghkeys-linux-amd64
+    - release/ghkeys-linux-386
+    - release/ghkeys-linux-arm
+  skip_cleanup: true
+  on:
+    repo: conortm/ghkeys
+    tags: true
+    go: 1.5
