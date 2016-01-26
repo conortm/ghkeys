@@ -16,14 +16,10 @@ type config struct {
 }
 
 func newConfig(configFilename string) (config, error) {
-	config := config{}
-	data, err := ioutil.ReadFile(configFilename)
-	if err != nil {
-		return config, err
+	c := config{}
+	d, err := ioutil.ReadFile(configFilename)
+	if err == nil {
+		err = yaml.Unmarshal(d, &c)
 	}
-	err = yaml.Unmarshal(data, &config)
-	if err != nil {
-		return config, err
-	}
-	return config, nil
+	return c, err
 }

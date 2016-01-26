@@ -8,26 +8,14 @@ import (
 	"golang.org/x/oauth2"
 )
 
-type tokenSource struct {
-	token *oauth2.Token
-}
-
-func (t *tokenSource) Token() (*oauth2.Token, error) {
-	return t.token, nil
-}
-
 type githubClient struct {
 	*github.Client
 }
 
 func newGithubClient(token string) *githubClient {
-	// TODO: https://github.com/sourcegraph/apiproxy
-	client := github.NewClient(oauth2.NewClient(oauth2.NoContext, &tokenSource{
-		&oauth2.Token{
-			AccessToken: token,
-			TokenType:   "token",
-		},
-	}))
+	client := github.NewClient(oauth2.NewClient(oauth2.NoContext, oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: token},
+	)))
 	return &githubClient{client}
 }
 
