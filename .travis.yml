@@ -1,15 +1,16 @@
 language: go
 sudo: false
 go:
-  - 1.4.2
-  - 1.5
+  - 1.4.3
+  - 1.5.3
+  - 1.6
   - tip
-install:
-  - make install
-before_script:
+before_install:
   - go get github.com/axw/gocov/gocov
   - go get github.com/mattn/goveralls
   - if ! go get github.com/golang/tools/cmd/cover; then go get golang.org/x/tools/cmd/cover; fi
+install:
+  - make install
 script:
   - make travis
 notifications:
@@ -28,4 +29,4 @@ deploy:
   on:
     repo: conortm/ghkeys
     tags: true
-    go: 1.5
+    go: 1.6

@@ -12,7 +12,7 @@ release:
 	GOOS=linux GOARCH=arm go build -o release/ghkeys-linux-arm $(package)
 
 test:
-	go test
+	go test -v
 
 travis:
 	$(HOME)/gopath/bin/goveralls -service=travis-ci
