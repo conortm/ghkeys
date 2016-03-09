@@ -39,12 +39,12 @@
 <h2>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
 
-<div class="highlight highlight-source-shell"><pre>$ go get github.com/conortm/ghkeys</pre></div>
+<div class="highlight highlight-source-shell"><pre>go get github.com/conortm/ghkeys</pre></div>
 
 <h2>
 <a id="configuration" class="anchor" href="#configuration" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Configuration</h2>
 
-<p>Create a <code>config.yml</code> file like <a href="./config.example.yml"><code>config.example.yml</code></a>:</p>
+<p>Create a <code>config.yml</code> file like <a href="https://github.com/conortm/ghkeys/blob/master/config.example.yml"><code>config.example.yml</code></a>:</p>
 
 <div class="highlight highlight-source-yaml"><pre><span class="pl-s">-<span class="pl-s">--</span></span>
 <span class="pl-c"># Replace with your own personal access token:</span>
@@ -72,15 +72,15 @@
 
 <p>To print all keys:</p>
 
-<div class="highlight highlight-source-shell"><pre>$ ghkeys -config=<span class="pl-s"><span class="pl-pds">"</span>/path/to/config.yml<span class="pl-pds">"</span></span></pre></div>
+<div class="highlight highlight-source-shell"><pre>ghkeys -config=/path/to/config.yml</pre></div>
 
 <p>Pass single username argument to print only that user's keys, for example, when using <code>AuthorizedKeysCommand</code>:</p>
 
-<div class="highlight highlight-source-shell"><pre>$ ghkeys -config=<span class="pl-s"><span class="pl-pds">"</span>/path/to/config.yml<span class="pl-pds">"</span></span> superadmin</pre></div>
+<div class="highlight highlight-source-shell"><pre>ghkeys -config=/path/to/config.yml superadmin</pre></div>
 
 <p>Use the <code>-write</code> flag to write keys to users' <code>authorized_keys</code> files:</p>
 
-<div class="highlight highlight-source-shell"><pre>$ ghkeys -config=<span class="pl-s"><span class="pl-pds">"</span>/path/to/config.yml<span class="pl-pds">"</span></span> -write</pre></div>
+<div class="highlight highlight-source-shell"><pre>ghkeys -config=/path/to/config.yml -write</pre></div>
 
 <h2>
 <a id="todo" class="anchor" href="#todo" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>TODO</h2>
@@ -95,7 +95,7 @@
 <h2>
 <a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h2>
 
-<p><a href="https://github.com/conortm/ghkeys/blob/master/LICENSE">MIT</a> © <a href="https://github.com/conortm">Conor McNamara</a></p>
+<p><a href="https://github.com/conortm/ghkeys/blob/master/LICENSE">MIT</a> © <a href="http://conortm.io/">Conor McNamara</a></p>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/conortm">conortm</a></p>
