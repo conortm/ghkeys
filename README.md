@@ -6,8 +6,8 @@ Via configuration, specify individual GitHub users and/or entire teams, whose SS
 
 ## Installation
 
-```sh
-$ go get github.com/conortm/ghkeys
+```bash
+go get github.com/conortm/ghkeys
 ```
 
 ## Configuration
@@ -41,20 +41,20 @@ users:
 
 To print all keys:
 
-```sh
-$ ghkeys -config="/path/to/config.yml"
+```bash
+ghkeys -config=/path/to/config.yml
 ```
 
 Pass single username argument to print only that user's keys, for example, when using `AuthorizedKeysCommand`:
 
-```sh
-$ ghkeys -config="/path/to/config.yml" superadmin
+```bash
+ghkeys -config=/path/to/config.yml superadmin
 ```
 
 Use the `-write` flag to write keys to users' `authorized_keys` files:
 
-```sh
-$ ghkeys -config="/path/to/config.yml" -write
+```bash
+ghkeys -config=/path/to/config.yml -write
 ```
 
 ## TODO
@@ -65,4 +65,4 @@ $ ghkeys -config="/path/to/config.yml" -write
 
 ## License
 
-[MIT](./LICENSE) © [Conor McNamara](https://github.com/conortm)
+[MIT](./LICENSE) © [Conor McNamara](http://conortm.io/)
